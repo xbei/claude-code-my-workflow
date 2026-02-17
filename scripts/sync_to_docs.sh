@@ -68,13 +68,23 @@ for pdf in "$REPO_ROOT/Slides/"*.pdf; do
     fi
 done
 
-# 4. Sync R scripts to docs/files/code/
-echo "Syncing R scripts..."
+# 4. Sync Python scripts to docs/files/code/
+echo "Syncing Python scripts..."
 mkdir -p "$DOCS_DIR/files/code"
-for rscript in "$REPO_ROOT/scripts/R/"*.R; do
-    if [ -f "$rscript" ]; then
-        echo "  Copying $(basename "$rscript")..."
-        cp "$rscript" "$DOCS_DIR/files/code/"
+for pyscript in "$REPO_ROOT/scripts/python/"*.py; do
+    if [ -f "$pyscript" ]; then
+        echo "  Copying $(basename "$pyscript")..."
+        cp "$pyscript" "$DOCS_DIR/files/code/"
+    fi
+done
+
+# 4b. Sync Jupyter notebooks to docs/files/notebooks/
+echo "Syncing Jupyter notebooks..."
+mkdir -p "$DOCS_DIR/files/notebooks"
+for notebook in "$REPO_ROOT/notebooks/"*.ipynb; do
+    if [ -f "$notebook" ]; then
+        echo "  Copying $(basename "$notebook")..."
+        cp "$notebook" "$DOCS_DIR/files/notebooks/"
     fi
 done
 

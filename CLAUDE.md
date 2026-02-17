@@ -5,8 +5,7 @@
      Keep this file under ~150 lines — Claude loads it every session.
      See the guide at docs/workflow-guide.html for full documentation. -->
 
-**Project:** [YOUR PROJECT NAME]
-**Institution:** [YOUR INSTITUTION]
+**Project:** Academic Workflow Template (Personal)
 **Branch:** main
 
 ---
@@ -24,7 +23,7 @@
 ## Folder Structure
 
 ```
-[YOUR-PROJECT]/
+my-project/
 ├── CLAUDE.MD                    # This file
 ├── .claude/                     # Rules, skills, agents, hooks
 ├── Bibliography_base.bib        # Centralized bibliography
@@ -33,7 +32,9 @@
 ├── Slides/                      # Beamer .tex files
 ├── Quarto/                      # RevealJS .qmd files + theme
 ├── docs/                        # GitHub Pages (auto-generated)
-├── scripts/                     # Utility scripts + R code
+├── scripts/                     # Utility scripts + Python code
+│   └── python/                  # Python analysis scripts
+├── notebooks/                   # Jupyter notebooks
 ├── quality_reports/             # Plans, session logs, merge reports
 ├── explorations/                # Research sandbox (see rules)
 ├── templates/                   # Session log, quality report templates
@@ -51,11 +52,18 @@ BIBINPUTS=..:$BIBINPUTS bibtex file
 TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
 TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode file.tex
 
+# Python scripts
+python3 scripts/python/analysis.py
+
+# Jupyter notebooks
+jupyter nbconvert --execute notebooks/exploration.ipynb
+
 # Deploy Quarto to GitHub Pages
 ./scripts/sync_to_docs.sh LectureN
 
 # Quality score
 python scripts/quality_score.py Quarto/file.qmd
+python scripts/quality_score.py scripts/python/file.py
 ```
 
 ---
@@ -80,7 +88,7 @@ python scripts/quality_score.py Quarto/file.qmd
 | `/proofread [file]` | Grammar/typo/overflow review |
 | `/visual-audit [file]` | Slide layout audit |
 | `/pedagogy-review [file]` | Narrative, notation, pacing review |
-| `/review-r [file]` | R code quality review |
+| `/review-python [file]` | Python code quality review |
 | `/qa-quarto [LectureN]` | Adversarial Quarto vs Beamer QA |
 | `/slide-excellence [file]` | Combined multi-agent review |
 | `/translate-to-quarto [file]` | Beamer → Quarto translation |
@@ -92,7 +100,7 @@ python scripts/quality_score.py Quarto/file.qmd
 | `/research-ideation [topic]` | Research questions + strategies |
 | `/interview-me [topic]` | Interactive research interview |
 | `/review-paper [file]` | Manuscript review |
-| `/data-analysis [dataset]` | End-to-end R analysis |
+| `/data-analysis [dataset]` | End-to-end Python analysis |
 
 ---
 
@@ -129,5 +137,4 @@ python scripts/quality_score.py Quarto/file.qmd
 
 | Lecture | Beamer | Quarto | Key Content |
 |---------|--------|--------|-------------|
-| 1: [Topic] | `Lecture01_Topic.tex` | `Lecture1_Topic.qmd` | [Brief description] |
-| 2: [Topic] | `Lecture02_Topic.tex` | -- | [Brief description] |
+| *(No lectures yet — add rows as you create them)* | | | |

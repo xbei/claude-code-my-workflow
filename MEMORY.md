@@ -63,6 +63,12 @@ When a mistake is corrected, append a `[LEARN:category]` entry below.
 
 [LEARN:memory] Post-merge hooks prompt reflection, don't auto-append → user maintains control while building habit.
 
+## Project Configuration
+
+[LEARN:config] Primary analysis language is Python (scripts in `scripts/python/`, notebooks in `notebooks/`). Use pandas, numpy, matplotlib, statsmodels, scikit-learn as core stack. Parquet/pickle for data persistence (not RDS).
+
+[LEARN:config] User preferences: structured + precise + rigorous collaboration. Publication-ready visuals. Smart about remembering decisions. Check in more often during initial sessions.
+
 ## Meta-Governance
 
 [LEARN:meta] Repository dual nature requires explicit governance: what's generic (commit) vs specific (gitignore) → prevents template pollution.

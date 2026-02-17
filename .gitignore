@@ -25,6 +25,12 @@
 __pycache__/
 *.pyc
 *.pyo
+*.egg-info/
+.venv/
+venv/
+.ipynb_checkpoints/
+dist/
+build/
 
 # R
 .Rproj.user/
@@ -51,5 +57,5 @@ Thumbs.db
 /.quarto/
 
 # Output artifacts — uncomment lines below based on your preference
-# *.rds
-# output/**/*.rds
+# *.pkl
+# output/**/*.parquet

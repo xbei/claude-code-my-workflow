@@ -1,7 +1,7 @@
 ---
 paths:
-  - "scripts/**/*.R"
-  - "Figures/**/*.R"
+  - "scripts/**/*.py"
+  - "notebooks/**/*.ipynb"
 ---
 
 # Replication-First Protocol
@@ -12,7 +12,7 @@ paths:
 
 ## Phase 1: Inventory & Baseline
 
-Before writing any R code:
+Before writing any Python code:
 
 - [ ] Read the paper's replication README
 - [ ] Inventory replication package: language, data files, scripts, outputs
@@ -26,27 +26,27 @@ Before writing any R code:
 | Main ATT | Table 2, Col 3 | -1.632 | (0.584) | Primary specification |
 ```
 
-- [ ] Store targets in `quality_reports/LectureNN_replication_targets.md` or as RDS
+- [ ] Store targets in `quality_reports/LectureNN_replication_targets.md` or as parquet/pickle
 
 ---
 
 ## Phase 2: Translate & Execute
 
-- [ ] Follow `r-code-conventions.md` for all R coding standards
+- [ ] Follow `python-code-conventions.md` for all Python coding standards
 - [ ] Translate line-by-line initially -- don't "improve" during replication
 - [ ] Match original specification exactly (covariates, sample, clustering, SE computation)
-- [ ] Save all intermediate results as RDS
+- [ ] Save all intermediate results as parquet/pickle
 
-### Stata to R Translation Pitfalls
+### Stata/R to Python Translation Pitfalls
 
 <!-- Customize: Add pitfalls specific to your field -->
 
-| Stata | R | Trap |
-|-------|---|------|
-| `reg y x, cluster(id)` | `feols(y ~ x, cluster = ~id)` | Stata clusters df-adjust differently from some R packages |
-| `areg y x, absorb(id)` | `feols(y ~ x \| id)` | Check demeaning method matches |
-| `probit` for PS | `glm(family=binomial(link="probit"))` | R default logit != Stata default in some commands |
-| `bootstrap, reps(999)` | Depends on method | Match seed, reps, and bootstrap type exactly |
+| Original | Python | Trap |
+|----------|--------|------|
+| `reg y x, cluster(id)` (Stata) | `sm.OLS(...).fit(cov_type='cluster', cov_kwds={'groups': id})` | Check df-adjustment matches |
+| `feols(y ~ x \| id)` (R) | `PanelOLS(..., entity_effects=True)` from `linearmodels` | Check demeaning method matches |
+| `glm(family=binomial)` (R) | `sm.GLM(..., family=sm.families.Binomial())` | R default link may differ |
+| `bootstrap, reps(999)` (Stata) | `scipy.stats.bootstrap` or manual | Match seed, reps, and method exactly |
 
 ---
 
@@ -74,7 +74,7 @@ Save to `quality_reports/LectureNN_replication_report.md`:
 # Replication Report: [Paper Author (Year)]
 **Date:** [YYYY-MM-DD]
 **Original language:** [Stata/R/etc.]
-**R translation:** [script path]
+**Python translation:** [script path]
 
 ## Summary
 - **Targets checked / Passed / Failed:** N / M / K
@@ -89,7 +89,7 @@ Save to `quality_reports/LectureNN_replication_report.md`:
 - **Target:** X | **Investigation:** ... | **Resolution:** ...
 
 ## Environment
-- R version, key packages (with versions), data source
+- Python version, key packages (with versions), data source
 ```
 
 ---

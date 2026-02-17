@@ -1,11 +1,11 @@
 # My Claude Code Setup
 
-> **Work in progress.** This is not meant to be a polished guide for everyone. It's mostly a summary of how I've been using Claude Code for academic work — creating lecture slides, writing R scripts, managing Beamer-to-Quarto workflows, and so on. I keep learning new things, and as I do, I keep updating these files. This is just a way for me to share what I've figured out with friends and colleagues.
+> **Work in progress.** This is not meant to be a polished guide for everyone. It's mostly a summary of how I've been using Claude Code for academic work — creating lecture slides, writing Python scripts, managing Beamer-to-Quarto workflows, and so on. I keep learning new things, and as I do, I keep updating these files. This is just a way for me to share what I've figured out with friends and colleagues.
 
 **Live site:** [psantanna.com/claude-code-my-workflow](https://psantanna.com/claude-code-my-workflow/)
 **Last Updated:** 2026-02-15
 
-A ready-to-fork starter kit for academics using [Claude Code](https://code.claude.com/docs/en/overview) with **LaTeX/Beamer + R + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course (6 lectures, 800+ slides).
+A ready-to-fork starter kit for academics using [Claude Code](https://code.claude.com/docs/en/overview) with **LaTeX/Beamer + Python + Quarto**. You describe what you want; Claude plans the approach, runs specialized agents, fixes issues, verifies quality, and presents results — like a contractor who handles the entire job. Extracted from a production PhD course (6 lectures, 800+ slides).
 
 ---
 
@@ -60,7 +60,7 @@ Instead of one general-purpose reviewer, 10 focused agents each check one dimens
 - **proofreader** — grammar/typos
 - **slide-auditor** — visual layout
 - **pedagogy-reviewer** — teaching quality
-- **r-reviewer** — R code quality
+- **python-reviewer** — Python code quality
 - **domain-reviewer** — field-specific correctness (template — customize for your field)
 
 Each is better at its narrow task than a generalist would be. The `/slide-excellence` skill runs them all in parallel.
@@ -108,7 +108,7 @@ It covers:
 | `proofreader` | Grammar, typos, overflow, consistency review |
 | `slide-auditor` | Visual layout audit (overflow, font consistency, spacing) |
 | `pedagogy-reviewer` | 13-pattern pedagogical review (narrative arc, notation density, pacing) |
-| `r-reviewer` | R code quality, reproducibility, and domain correctness |
+| `python-reviewer` | Python code quality, reproducibility, and domain correctness |
 | `tikz-reviewer` | Merciless TikZ diagram visual critique |
 | `beamer-translator` | Beamer-to-Quarto translation specialist |
 | `quarto-critic` | Adversarial QA comparing Quarto against Beamer benchmark |
@@ -126,7 +126,7 @@ It covers:
 | `/proofread` | Launch proofreader on a file |
 | `/visual-audit` | Launch slide-auditor on a file |
 | `/pedagogy-review` | Launch pedagogy-reviewer on a file |
-| `/review-r` | Launch R code reviewer |
+| `/review-python` | Launch Python code reviewer |
 | `/qa-quarto` | Adversarial critic-fixer loop (max 5 rounds) |
 | `/slide-excellence` | Combined multi-agent review |
 | `/translate-to-quarto` | Full 11-phase Beamer-to-Quarto translation |
@@ -138,7 +138,7 @@ It covers:
 | `/research-ideation` | Generate research questions and empirical strategies |
 | `/interview-me` | Interactive interview to formalize a research idea |
 | `/review-paper` | Manuscript review: structure, econometrics, referee objections |
-| `/data-analysis` | End-to-end R analysis with publication-ready output |
+| `/data-analysis` | End-to-end Python analysis with publication-ready output |
 | `/learn` | Extract non-obvious discoveries into persistent skills |
 | `/context-status` | Show session health and context usage |
 
@@ -172,16 +172,16 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 |------|------------|-----------------|
 | `verification-protocol` | `.tex`, `.qmd`, `docs/` | Task completion checklist |
 | `single-source-of-truth` | `Figures/`, `.tex`, `.qmd` | No content duplication; Beamer is authoritative |
-| `quality-gates` | `.tex`, `.qmd`, `*.R` | 80/90/95 scoring + tolerance thresholds |
-| `r-code-conventions` | `*.R` | R coding standards + math line-length exception |
+| `quality-gates` | `.tex`, `.qmd`, `*.py` | 80/90/95 scoring + tolerance thresholds |
+| `python-code-conventions` | `*.py`, `*.ipynb` | Python coding standards + math line-length exception |
 | `tikz-visual-quality` | `.tex` | TikZ diagram visual standards |
 | `beamer-quarto-sync` | `.tex`, `.qmd` | Auto-sync Beamer edits to Quarto |
 | `pdf-processing` | `master_supporting_docs/` | Safe large PDF handling |
 | `proofreading-protocol` | `.tex`, `.qmd`, `quality_reports/` | Propose-first, then apply with approval |
 | `no-pause-beamer` | `.tex` | No overlay commands in Beamer |
-| `replication-protocol` | `*.R` | Replicate original results before extending |
-| `knowledge-base-template` | `.tex`, `.qmd`, `*.R` | Notation/application registry template |
-| `orchestrator-research` | `*.R`, `explorations/` | Simple orchestrator for research (no multi-round reviews) |
+| `replication-protocol` | `*.py` | Replicate original results before extending |
+| `knowledge-base-template` | `.tex`, `.qmd`, `*.py` | Notation/application registry template |
+| `orchestrator-research` | `*.py`, `explorations/` | Simple orchestrator for research (no multi-round reviews) |
 | `exploration-folder-protocol` | `explorations/` | Structured sandbox for experimental work |
 | `exploration-fast-track` | `explorations/` | Lightweight exploration workflow (60/100 threshold) |
 
@@ -208,7 +208,7 @@ Rules use path-scoped loading: **always-on** rules load every session (~100 line
 | [Claude Code](https://code.claude.com/docs/en/overview) | Everything | `npm install -g @anthropic-ai/claude-code` |
 | XeLaTeX | LaTeX compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
 | [Quarto](https://quarto.org) | Web slides | [quarto.org/docs/get-started](https://quarto.org/docs/get-started/) |
-| R | Figures & analysis | [r-project.org](https://www.r-project.org/) |
+| Python 3 | Analysis & figures | [python.org](https://www.python.org/) |
 | pdf2svg | TikZ to SVG | `brew install pdf2svg` (macOS) |
 | [gh CLI](https://cli.github.com/) | PR workflow | `brew install gh` (macOS) |
 
@@ -221,7 +221,7 @@ Not all tools are needed — install only what your project uses. Claude Code is
 1. **Fill in the knowledge base** (`.claude/rules/knowledge-base-template.md`) with your notation, applications, and design principles
 2. **Customize the domain reviewer** (`.claude/agents/domain-reviewer.md`) with review lenses specific to your field
 3. **Update the color palette** in your Quarto theme SCSS file — change the color variables at the top
-4. **Add field-specific R pitfalls** to `.claude/rules/r-code-conventions.md`
+4. **Add field-specific Python pitfalls** to `.claude/rules/python-code-conventions.md`
 5. **Fill in the lecture mapping** in `.claude/rules/beamer-quarto-sync.md`
 6. **Customize the workflow quick reference** (`.claude/WORKFLOW_QUICK_REF.md`) with your non-negotiables and preferences
 7. **Set up the exploration folder** (`explorations/`) for experimental work
@@ -237,7 +237,7 @@ Not all tools are needed — install only what your project uses. Claude Code is
 
 ## Origin
 
-This infrastructure was extracted from **Econ 730: Causal Panel Data** at Emory University, developed by Pedro Sant'Anna using Claude Code over 6+ sessions. The course produced 6 complete PhD lecture decks with 800+ slides, interactive Quarto versions with plotly charts, and full R replication packages — all managed through this multi-agent workflow.
+This infrastructure was extracted from **Econ 730: Causal Panel Data** at Emory University, developed by Pedro Sant'Anna using Claude Code over 6+ sessions. The course produced 6 complete PhD lecture decks with 800+ slides, interactive Quarto versions with plotly charts, and full Python replication packages — all managed through this multi-agent workflow.
 
 ---
 

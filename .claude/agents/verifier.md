@@ -33,12 +33,12 @@ TEXINPUTS=../Preambles:$TEXINPUTS xelatex -interaction=nonstopmode FILENAME.tex 
 - **Plotly verification**: grep for `htmlwidget` count in rendered HTML
 - **Environment parity**: scan QMD for all `::: {.classname}` and verify each class exists in the theme SCSS
 
-### For `.R` files (R scripts):
+### For `.py` files (Python scripts):
 ```bash
-Rscript scripts/R/FILENAME.R 2>&1 | tail -20
+python3 scripts/python/FILENAME.py 2>&1 | tail -20
 ```
 - Check exit code
-- Verify output files (PDF, RDS) were created
+- Verify output files (PDF, parquet, pickle) were created
 - Check file sizes > 0
 
 ### For `.svg` files (TikZ diagrams):

@@ -31,9 +31,9 @@ paths:
 5. Copy SVGs to `docs/Figures/LectureX/` via `sync_to_docs.sh`
 6. **Freshness check:** Before using any TikZ SVG, verify extract_tikz.tex matches current Beamer source
 
-## For R Scripts:
-1. Run `Rscript scripts/R/filename.R`
-2. Verify output files (PDF, RDS) were created with non-zero size
+## For Python Scripts:
+1. Run `python3 scripts/python/filename.py`
+2. Verify output files (PDF, parquet, pickle) were created with non-zero size
 3. Spot-check estimates for reasonable magnitude
 
 ## Common Pitfalls:

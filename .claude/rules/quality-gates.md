@@ -2,7 +2,8 @@
 paths:
   - "Slides/**/*.tex"
   - "Quarto/**/*.qmd"
-  - "scripts/**/*.R"
+  - "scripts/**/*.py"
+  - "notebooks/**/*.ipynb"
 ---
 
 # Quality Gates & Scoring Rubrics
@@ -27,15 +28,18 @@ paths:
 | Minor | Font size reduction | -1 per slide |
 | Minor | Long lines (>100 chars) | -1 (EXCEPT documented math formulas) |
 
-## R Scripts (.R)
+## Python Scripts (.py)
 
 | Severity | Issue | Deduction |
 |----------|-------|-----------|
 | Critical | Syntax errors | -100 |
 | Critical | Domain-specific bugs | -30 |
 | Critical | Hardcoded absolute paths | -20 |
-| Major | Missing set.seed() | -10 |
+| Critical | Wildcard imports | -10 |
+| Major | Missing random seed | -10 |
 | Major | Missing figure generation | -5 |
+| Major | Missing data persistence | -5 |
+| Minor | Missing docstring | -1 |
 
 ## Beamer Slides (.tex)
 

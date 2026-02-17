@@ -10,7 +10,7 @@ Usage:
     python scripts/quality_score.py Quarto/Lecture6_Topic.qmd --summary
     python scripts/quality_score.py Quarto/*.qmd
     python scripts/quality_score.py Slides/Lecture01_Topic.tex
-    python scripts/quality_score.py scripts/R/Lecture06_simulations.R
+    python scripts/quality_score.py scripts/python/analysis.py
 """
 
 import sys
@@ -61,6 +61,23 @@ R_SCRIPT_RUBRIC = {
     'minor': {
         'style_violation': {'points': 1},
         'missing_roxygen': {'points': 1},
+    }
+}
+
+PYTHON_SCRIPT_RUBRIC = {
+    'critical': {
+        'syntax_error': {'points': 100, 'auto_fail': True},
+        'hardcoded_path': {'points': 20},
+        'missing_import': {'points': 10},
+    },
+    'major': {
+        'missing_seed': {'points': 10},
+        'missing_figure': {'points': 5},
+        'missing_persistence': {'points': 5},
+    },
+    'minor': {
+        'style_violation': {'points': 1},
+        'missing_docstring': {'points': 1},
     }
 }
 
@@ -243,6 +260,34 @@ class IssueDetector:
                     issues.append(i)
 
         return issues
+
+    @staticmethod
+    def check_python_syntax(filepath: Path) -> Tuple[bool, str]:
+        """Check Python script for syntax errors using ast.parse."""
+        try:
+            import ast
+            source = filepath.read_text(encoding='utf-8')
+            ast.parse(source, filename=str(filepath))
+            return True, ""
+        except SyntaxError as e:
+            return False, f"Line {e.lineno}: {e.msg}"
+
+    @staticmethod
+    def check_wildcard_imports(content: str) -> List[int]:
+        """Detect wildcard imports (from x import *)."""
+        issues = []
+        for i, line in enumerate(content.split('\n'), 1):
+            stripped = line.strip()
+            if re.match(r'from\s+\S+\s+import\s+\*', stripped):
+                issues.append(i)
+        return issues
+
+    @staticmethod
+    def check_missing_docstring(content: str) -> bool:
+        """Check if module-level docstring is missing."""
+        stripped = content.lstrip()
+        return not (stripped.startswith('"""') or stripped.startswith("'''")
+                    or stripped.startswith('#!'))
 
     @staticmethod
     def check_latex_syntax(content: str) -> List[Dict]:
@@ -489,6 +534,76 @@ class QualityScorer:
         self.score = max(0, self.score)
         return self._generate_report()
 
+    def score_python_script(self) -> Dict:
+        """Score Python script quality."""
+        content = self.filepath.read_text(encoding='utf-8')
+
+        # Check syntax
+        is_valid, error = IssueDetector.check_python_syntax(self.filepath)
+        if not is_valid:
+            self.auto_fail = True
+            self.issues['critical'].append({
+                'type': 'syntax_error',
+                'description': 'Python syntax error',
+                'details': error[:200],
+                'points': 100
+            })
+            self.score = 0
+            return self._generate_report()
+
+        # Check hardcoded paths
+        path_issues = IssueDetector.check_hardcoded_paths(content)
+        for line in path_issues:
+            self.issues['critical'].append({
+                'type': 'hardcoded_path',
+                'description': f'Hardcoded absolute path at line {line}',
+                'details': 'Use pathlib.Path with relative paths',
+                'points': 20
+            })
+            self.score -= 20
+
+        # Check for wildcard imports
+        wildcard_lines = IssueDetector.check_wildcard_imports(content)
+        for line in wildcard_lines:
+            self.issues['critical'].append({
+                'type': 'missing_import',
+                'description': f'Wildcard import at line {line}',
+                'details': 'Use explicit imports instead of "from x import *"',
+                'points': 10
+            })
+            self.score -= 10
+
+        # Check for seed if randomness detected
+        has_random = any(fn in content for fn in [
+            'np.random', 'random.', 'torch.manual_seed',
+            'sklearn', 'sample(', 'shuffle('
+        ])
+        has_seed = any(s in content for s in [
+            'random.seed', 'np.random.seed', 'torch.manual_seed',
+            'random_state='
+        ])
+        if has_random and not has_seed:
+            self.issues['major'].append({
+                'type': 'missing_seed',
+                'description': 'Missing random seed for reproducibility',
+                'details': 'Add np.random.seed() or random.seed() at script top',
+                'points': 10
+            })
+            self.score -= 10
+
+        # Check for missing module docstring
+        if IssueDetector.check_missing_docstring(content):
+            self.issues['minor'].append({
+                'type': 'missing_docstring',
+                'description': 'Missing module-level docstring',
+                'details': 'Add a docstring at the top of the file',
+                'points': 1
+            })
+            self.score -= 1
+
+        self.score = max(0, self.score)
+        return self._generate_report()
+
     def score_beamer(self) -> Dict:
         """Score Beamer/LaTeX lecture slides."""
         content = self.filepath.read_text(encoding='utf-8')
@@ -685,8 +800,8 @@ Examples:
   # Score a Beamer/LaTeX file
   python scripts/quality_score.py Slides/Lecture01_Topic.tex
 
-  # Score an R script
-  python scripts/quality_score.py scripts/R/Lecture06_simulations.R
+  # Score a Python script
+  python scripts/quality_score.py scripts/python/analysis.py
 
   # Summary only (no detailed issues)
   python scripts/quality_score.py Quarto/Lecture6.qmd --summary
@@ -729,6 +844,8 @@ Exit Codes:
                 report = scorer.score_quarto()
             elif filepath.suffix == '.R':
                 report = scorer.score_r_script()
+            elif filepath.suffix == '.py':
+                report = scorer.score_python_script()
             elif filepath.suffix == '.tex':
                 report = scorer.score_beamer()
             else:
